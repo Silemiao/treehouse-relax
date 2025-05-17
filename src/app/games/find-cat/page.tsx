@@ -42,7 +42,12 @@ export default function FindCat() {
 
   const nextScene = () => {
     if (currentScene < scenes.length - 1) {
-      setCurrentScene(currentScene + 1)
+      setCurrentScene(prev => prev + 1)
+      setFound(false)
+      setClicks([])
+      setShowHint(false)
+    } else {
+      setCurrentScene(0)
       setFound(false)
       setClicks([])
       setShowHint(false)
@@ -134,4 +139,4 @@ export default function FindCat() {
       </div>
     </>
   )
-} 
+}

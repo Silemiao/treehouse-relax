@@ -30,7 +30,14 @@ export default function Game2048() {
       setHighScore(parseInt(savedHighScore))
     }
     initGame()
-  }, [])
+    const saveHighScore = () => {
+      if (score > highScore) {
+        setHighScore(score);
+        localStorage.setItem('2048_high_score', score.toString());
+      }
+    };
+    saveHighScore();
+  }, [score])
 
   // 处理触摸开始
   const handleTouchStart = (e: TouchEvent) => {
@@ -49,8 +56,8 @@ export default function Game2048() {
     const deltaX = touch.clientX - touchStart.x
     const deltaY = touch.clientY - touchStart.y
 
-    // 判断滑动方向
-    if (Math.abs(deltaX) > 30 || Math.abs(deltaY) > 30) {
+    if (Math.abs(deltaX) > 20 || Math.abs(deltaY) > 20) {
+      // 判断滑动方向
       if (Math.abs(deltaX) > Math.abs(deltaY)) {
         handleMove(deltaX > 0 ? 'right' : 'left')
       } else {
@@ -99,14 +106,145 @@ export default function Game2048() {
 
   // 处理方块移动
   const handleMove = (direction: 'up' | 'down' | 'left' | 'right') => {
-    // 实现方块移动逻辑
-    // ...（这里需要实现具体的移动和合并逻辑）
-  }
+    setGrid(prevGrid => {
+// 为避免变量重复声明，移除后续重复的 newGrid 声明，这里使用当前声明的 newGrid 进行后续操作
+let newGrid = [...prevGrid];
+      // 实现方块移动逻辑
+      let moved = false;
+      let newScore = score;
+  
+      // 按方向整理方块
+      const getLine = (rowIndex: number, colIndex: number): Tile[] => {
+        switch (direction) {
+          case 'up':
+            return newGrid.filter(tile => tile.position[1] === colIndex).sort((a, b) => a.position[0] - b.position[0]);
+          case 'down':
+            return newGrid.filter(tile => tile.position[1] === colIndex).sort((a, b) => b.position[0] - a.position[0]);
+          case 'left':
+            return newGrid.filter(tile => tile.position[0] === rowIndex).sort((a, b) => a.position[1] - b.position[1]);
+          case 'right':
+            return newGrid.filter(tile => tile.position[0] === rowIndex).sort((a, b) => b.position[1] - a.position[1]);
+          default:
+            return [];
+        }
+      };
+  
+      const mergeLine = (line: Tile[]): Tile[] => {
+        const merged: Tile[] = [];
+        let i = 0;
+        while (i < line.length) {
+          if (i + 1 < line.length && line[i].value === line[i + 1].value) {
+            merged.push({
+              value: line[i].value * 2,
+              id: Date.now().toString(),
+              position: line[i].position
+            });
+            newScore += line[i].value * 2;
+            i += 2;
+            moved = true;
+          } else {
+            merged.push(line[i]);
+            i += 1;
+          }
+        }
+        return merged;
+      };
+  
+      const fillEmpty = (line: Tile[], rowIndex: number, colIndex: number): Tile[] => {
+        const newLine: Tile[] = [];
+        const emptyPositions: [number, number][] = [];
+  
+        if (direction === 'up' || direction === 'down') {
+          for (let i = 0; i < 4; i++) {
+            emptyPositions.push([i, colIndex]);
+          }
+        } else {
+          for (let i = 0; i < 4; i++) {
+            emptyPositions.push([rowIndex, i]);
+          }
+        }
+  
+        line.forEach((tile, index) => {
+          tile.position = emptyPositions[index];
+          newLine.push(tile);
+        });
+  
+        return newLine;
+      };
+  
+      // 添加游戏结束检测
+      const checkGameOver = (currentGrid: Tile[]) => {
+        if (currentGrid.length < 16) return false;
+        
+        for (let i = 0; i < 4; i++) {
+          for (let j = 0; j < 4; j++) {
+            const current = currentGrid.find(t => t.position[0] === i && t.position[1] === j);
+            const neighbors = [
+              currentGrid.find(t => t.position[0] === i+1 && t.position[1] === j),
+              currentGrid.find(t => t.position[0] === i-1 && t.position[1] === j),
+              currentGrid.find(t => t.position[0] === i && t.position[1] === j+1),
+              currentGrid.find(t => t.position[0] === i && t.position[1] === j-1)
+            ];
+            
+            if (neighbors.some(n => n?.value === current?.value)) return false;
+          }
+        }
+        return true;
+      };
+  
+      // 按方向处理行列
+      if (direction === 'up' || direction === 'down') {
+        // 垂直方向处理列
+        for (let col = 0; col < 4; col++) {
+          let line = getLine(0, col);
+          line = mergeLine(line);
+          line = fillEmpty(line, 0, col);
+          line.forEach(tile => {
+            if (!newGrid.some(t => t.id === tile.id)) {
+              newGrid.push(tile);
+            }
+          });
+        }
+      } else {
+        // 水平方向处理行
+        for (let row = 0; row < 4; row++) {
+          let line = getLine(row, 0);
+          line = mergeLine(line);
+          line = fillEmpty(line, row, 0);
+          line.forEach(tile => {
+            if (!newGrid.some(t => t.id === tile.id)) {
+              newGrid.push(tile);
+            }
+          });
+        }
+      }
+
+      if (moved) {
+        addNewTile(newGrid);
+        if (checkGameOver(newGrid)) {
+          alert('游戏结束！');
+          initGame();
+        }
+        return newGrid;
+      }
+      return newGrid;
+  
+      if (moved) {
+        addNewTile(newGrid);
+        if (checkGameOver(newGrid)) {
+          alert('游戏结束！');
+          initGame();
+        }
+        setGrid(newGrid);
+        setScore(newScore);
+      }
+    });
+  };
 
   // 处理作弊模式删除方块
   const handleTileClick = (tileId: string) => {
     if (cheatMode && selectedTile === tileId) {
-      setGrid(grid.filter(tile => tile.id !== tileId))
+      setGrid(prev => prev.filter(tile => tile.id !== tileId))
       setSelectedTile(null)
     } else if (cheatMode) {
       setSelectedTile(tileId)
@@ -188,4 +326,4 @@ export default function Game2048() {
       </div>
     </>
   )
-} 
+}
