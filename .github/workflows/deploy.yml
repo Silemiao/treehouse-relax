@@ -3,7 +3,10 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # 设置要部署的分支
+      - main
+
+permissions:
+  contents: write
 
 jobs:
   deploy:
@@ -15,18 +18,17 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
+          cache: 'npm'
           
       - name: Install dependencies
         run: npm install
           
       - name: Build
-        run: |
-          npm run build
-          touch out/.nojekyll
+        run: npm run build
           
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          branch: gh-pages  # 部署到 gh-pages 分支
-          folder: out  # 部署 out 目录
-          clean: true  # 清理旧文件 
+          folder: out
+          branch: gh-pages
+          clean: true 
