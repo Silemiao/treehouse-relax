@@ -5,4 +5,6 @@ const nextConfig = {
   images: {
     unoptimized: true,  // GitHub Pages 不支持图片优化
   },
-} 
+}
+
+module.exports = nextConfig 
