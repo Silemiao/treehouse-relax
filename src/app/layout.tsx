@@ -16,7 +16,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh">
-      <body className={inter.className}>{children}</body>
+      <body className={`${inter.className} bg-gradient-to-br from-green-50 to-blue-50`}>
+        <div className="fixed inset-0 -z-10">
+          <div className="absolute inset-0 bg-[url('/images/tree-bg.svg')] opacity-10 bg-repeat animate-float"></div>
+        </div>
+        {children}
+      </body>
     </html>
   )
 } 
