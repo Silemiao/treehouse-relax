@@ -1,11 +1,19 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Head from 'next/head'
 
+interface Scene {
+  id: number
+  title: string
+  image: string
+  cat: { x: number; y: number; radius: number }
+  hint: string
+}
+
 // 示例场景数据
-const scenes = [
+const defaultScenes: Scene[] = [
   {
     id: 1,
     title: '温馨树屋',
@@ -18,10 +26,55 @@ const scenes = [
 
 export default function FindCat() {
   const router = useRouter()
+  const [scenes, setScenes] = useState<Scene[]>(defaultScenes)
   const [currentScene, setCurrentScene] = useState(0)
   const [showHint, setShowHint] = useState(false)
   const [found, setFound] = useState(false)
   const [clicks, setClicks] = useState<{ x: number; y: number }[]>([])
+  const [isSettingCat, setIsSettingCat] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // 处理图片上传
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        const newScene: Scene = {
+          id: scenes.length + 1,
+          title: '自定义场景',
+          image: event.target?.result as string,
+          cat: { x: 0, y: 0, radius: 30 },
+          hint: '点击设置小猫位置'
+        }
+        setScenes([...scenes, newScene])
+        setCurrentScene(scenes.length)
+        setIsSettingCat(true)
+        setFound(false)
+        setClicks([])
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  // 设置小猫位置
+  const handleSetCatPosition = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isSettingCat) return
+    
+    const rect = e.currentTarget.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+
+    const updatedScenes = [...scenes]
+    updatedScenes[currentScene] = {
+      ...updatedScenes[currentScene],
+      cat: { x, y, radius: 30 },
+      hint: '小猫就在这附近...'
+    }
+    
+    setScenes(updatedScenes)
+    setIsSettingCat(false)
+  }
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
@@ -59,8 +112,25 @@ export default function FindCat() {
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       </Head>
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 p-4">
+      <div className="min-h-screen bg-gradient-to-b from-green-50 to-white p-4">
         <div className="max-w-4xl mx-auto">
+          {/* 上传按钮 */}
+          <div className="flex justify-end mb-4">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
+            />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2"
+            >
+              <span>📷</span>
+              <span>上传新图片</span>
+            </button>
+          </div>
           {/* 头部 */}
           <div className="flex items-center justify-between mb-6">
             <button
@@ -81,10 +151,10 @@ export default function FindCat() {
           </div>
 
           {/* 游戏区域 */}
-          <div className="relative bg-white rounded-xl shadow-lg overflow-hidden">
+          <div className="relative bg-white/80 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-gray-100">
             <div
               className="relative aspect-w-16 aspect-h-9 cursor-crosshair"
-              onClick={handleClick}
+              onClick={isSettingCat ? handleSetCatPosition : handleClick}
             >
               <Image
                 src={scenes[currentScene].image}
@@ -116,6 +186,11 @@ export default function FindCat() {
 
           {/* 提示和状态 */}
           <div className="mt-4 text-center px-4">
+            {isSettingCat && (
+              <p className="text-orange-500 mb-2 animate-pulse">
+                点击图片设置小猫的位置
+              </p>
+            )}
             {showHint && (
               <p className="text-green-600 mb-2 text-sm md:text-base">{scenes[currentScene].hint}</p>
             )}
