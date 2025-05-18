@@ -1,0 +1,57 @@
+{
+  "pages": {
+    "/_not-found/page": [
+      "static/chunks/webpack-70159fd0cc474e11.js",
+      "static/chunks/fd9d1056-10dfaec9b4318f4c.js",
+      "static/chunks/117-283340e257cdced5.js",
+      "static/chunks/main-app-467fcdf33c0ff8e5.js",
+      "static/chunks/app/_not-found/page-fe9fc664026166c6.js"
+    ],
+    "/layout": [
+      "static/chunks/webpack-70159fd0cc474e11.js",
+      "static/chunks/fd9d1056-10dfaec9b4318f4c.js",
+      "static/chunks/117-283340e257cdced5.js",
+      "static/chunks/main-app-467fcdf33c0ff8e5.js",
+      "static/css/7d34eee5198870ef.css",
+      "static/chunks/app/layout-ac96bd173439e2e3.js"
+    ],
+    "/games/2048/page": [
+      "static/chunks/webpack-70159fd0cc474e11.js",
+      "static/chunks/fd9d1056-10dfaec9b4318f4c.js",
+      "static/chunks/117-283340e257cdced5.js",
+      "static/chunks/main-app-467fcdf33c0ff8e5.js",
+      "static/chunks/app/games/2048/page-38c5d8574b08fc9f.js"
+    ],
+    "/games/spot-difference/page": [
+      "static/chunks/webpack-70159fd0cc474e11.js",
+      "static/chunks/fd9d1056-10dfaec9b4318f4c.js",
+      "static/chunks/117-283340e257cdced5.js",
+      "static/chunks/main-app-467fcdf33c0ff8e5.js",
+      "static/chunks/286-3ed7bb9e46c63860.js",
+      "static/chunks/app/games/spot-difference/page-a6cc16bd7996cc33.js"
+    ],
+    "/page": [
+      "static/chunks/webpack-70159fd0cc474e11.js",
+      "static/chunks/fd9d1056-10dfaec9b4318f4c.js",
+      "static/chunks/117-283340e257cdced5.js",
+      "static/chunks/main-app-467fcdf33c0ff8e5.js",
+      "static/chunks/648-444ee7d80ba0a7d5.js",
+      "static/chunks/app/page-88c66e3fc79c0c13.js"
+    ],
+    "/games/find-cat/page": [
+      "static/chunks/webpack-70159fd0cc474e11.js",
+      "static/chunks/fd9d1056-10dfaec9b4318f4c.js",
+      "static/chunks/117-283340e257cdced5.js",
+      "static/chunks/main-app-467fcdf33c0ff8e5.js",
+      "static/chunks/286-3ed7bb9e46c63860.js",
+      "static/chunks/app/games/find-cat/page-ecee1d45393e917f.js"
+    ],
+    "/relax-methods/page": [
+      "static/chunks/webpack-70159fd0cc474e11.js",
+      "static/chunks/fd9d1056-10dfaec9b4318f4c.js",
+      "static/chunks/117-283340e257cdced5.js",
+      "static/chunks/main-app-467fcdf33c0ff8e5.js",
+      "static/chunks/app/relax-methods/page-3ac3a201e03f5938.js"
+    ]
+  }
+}
