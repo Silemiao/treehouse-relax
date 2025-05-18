@@ -1,10 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',  // 启用静态导出
-  basePath: '/treehouse-relax',  // 设置基础路径
+  output: 'export',
+  basePath: '/treehouse-relax',
+  assetPrefix: '/treehouse-relax/',
   images: {
-    unoptimized: true,  // GitHub Pages 不支持图片优化
+    unoptimized: true,
   },
 }
 
-module.exports = nextConfig 
+module.exports = nextConfig
